@@ -1,0 +1,100 @@
+@import '_variables.scss';
+
+.Nav {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 3vw;
+  background-color: #fff;
+  border-right: 1px solid black;
+
+  &__content {
+    height: fit-content;
+    position: sticky;
+    top: 1px;
+    padding: 0 0.2vw;
+
+    @media screen and (max-width: $screen-md) {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      width: 99.4vw;
+      margin: 0.25rem 0;
+    }
+  }
+
+  &__logo {
+    @media screen and (max-width: $screen-md) {
+      margin-left: 1.5vw;
+      font-size: 1rem;
+      margin-block-start: 0rem;
+      margin-block-end: 0rem;
+    }
+  }
+
+  & a {
+    text-align: center;
+    font-size: 1.25vw;
+    color: #000;
+    text-decoration: none;
+    cursor: pointer;
+    font-family: sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  &__signOut,
+  &__signIn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    @media screen and (max-width: $screen-md) {
+      font-size: 0.9rem;
+      padding-right: 2vw;
+      flex-direction: row;
+    }
+
+    &-btn {
+      cursor: pointer;
+      background-color: transparent;
+      border: 0.16vw solid rgb(255, 157, 0);
+      border-radius: 5px;
+      margin: 0;
+      margin-top: 0.5vw;
+      padding: 0;
+      font-size: 1vw;
+      
+      @media screen and (max-width: $screen-md) {
+        padding: 0.15rem 0.25rem;
+        font-size: 0.6rem;
+        margin-left: 0.2rem;
+        border: 2px solid rgb(255, 157, 0);
+        margin-top: 0;
+      }
+    }
+  }
+
+  &__session {
+    display: flex;
+    align-items: center;
+  }
+
+  &__profilePic {
+    border-radius: 50%;
+    border: 0.2vw solid rgb(255, 157, 0);
+    width: 2.25vw;
+    height: 2.25vw;
+
+    @media screen and (max-width: $screen-md) {
+      height: 1.5rem;
+      width: 1.5rem;
+    }
+  }
+
+  @media screen and (max-width: $screen-md) {
+    width: 100vw;
+    border-right: none;
+  }
+}
