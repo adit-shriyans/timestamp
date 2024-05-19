@@ -9,12 +9,11 @@ interface CreateNotePropsType {
   currentTime: number;
 }
 
-const useCreateNote = ({videoId, note, currentTime}: CreateNotePropsType) => {
+const useCreateNote = () => {
   const { data: session } = useSession();
-  const [newNote, setNewNote] = useState<Note>({id: uuid(), videoId, note, timeStamp: currentTime, date: new Date()});
 
-  const createNote = useCallback(async ({videoId, note, currentTime}: CreateNotePropsType): Promise<Note> => {
-    setNewNote({id: uuid(), videoId, note, timeStamp: currentTime, date: new Date()});
+  const createNewNote = useCallback(async ({videoId, note, currentTime}: CreateNotePropsType): Promise<Note | null> => {
+    const date = new Date();
 
     if (session && session.user && session.user.id) {
       // Save to database if user is logged in
@@ -26,7 +25,7 @@ const useCreateNote = ({videoId, note, currentTime}: CreateNotePropsType) => {
             videoId,
             note,
             timeStamp: currentTime,
-            date: newNote.date,
+            date: date,
           }),
           headers: {
             'Content-Type': 'application/json',
@@ -35,29 +34,26 @@ const useCreateNote = ({videoId, note, currentTime}: CreateNotePropsType) => {
 
         if (!createNoteResponse.ok) {
           console.error('Failed to create note:', createNoteResponse.statusText);
-          return newNote;
+          return null;
         }
 
         const createdNote = await createNoteResponse.json();
-        return { ...newNote, id: createdNote._id }
+        return { id: createdNote._id, videoId, note, timeStamp: currentTime, date}
       } catch (error) {
         console.error('Error creating note:', error);
-        return newNote;
+        return null;
       }
     } else {
       // Save to local storage if user isn't logged in
       const savedNotes = JSON.parse(localStorage.getItem('notes') || '[]');
-      savedNotes.push(newNote);
+      const noteId = uuid();
+      savedNotes.push({id: noteId, videoId, note, timeStamp: currentTime, date});
       localStorage.setItem('notes', JSON.stringify(savedNotes));
+
       alert("Saved to local storage, login to save to database");
-      return newNote;
+      return {id: noteId, videoId, note, timeStamp: currentTime, date};
     }
   }, [session]);
-
-  const createNewNote = ({videoId, note, currentTime}: CreateNotePropsType): Note => {
-    createNote({videoId, note: note, currentTime});
-    return newNote;
-  }
 
   return { createNewNote };
 };

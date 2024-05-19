@@ -25,7 +25,7 @@ const Navbar = () => {
         <nav className='Nav'>
             <div className='Nav__content'>
                 <Link href='/'>
-                    <p className='Nav__logo'>Map</p>
+                    <p className='Nav__logo'>Home</p>
                 </Link>
 
                 <div className='Nav__session'>

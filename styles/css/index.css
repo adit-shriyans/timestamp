@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
 .App {
   height: calc(100vh - 2rem);
 }
@@ -28,6 +29,20 @@
 .Page__videoInput-submit {
   width: fit-content;
   text-transform: none;
+}
+.Page__video .VideoPlayer {
+  display: flex;
+  flex-direction: row;
+}
+.Page__video .VideoPlayer__video {
+  width: fit-content;
+}
+.Page__video .VideoPlayer__video > div {
+  width: fit-content !important;
+}
+.Page__video .VideoPlayer__notes {
+  width: calc(100% - 840px);
+  padding: 0.75rem;
 }
 
 .Root {

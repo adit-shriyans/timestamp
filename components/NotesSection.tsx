@@ -1,10 +1,10 @@
 import React, { useRef, useState, useEffect } from 'react';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
-import '@styles/css/NotesSection.css';
 import { Note } from '@assets/types/types';
 import NoteCard from './NoteCard';
 import { useSession } from 'next-auth/react';
 import useCreateNote from '@hooks/useCreateNote';
+import '@styles/css/NotesSection.css';
 
 interface NotesSectionProps {
     videoId: string;
@@ -14,11 +14,12 @@ interface NotesSectionProps {
     setIsAddingNotes: React.Dispatch<React.SetStateAction<boolean>>;
     notes: Note[];
     setNotes: React.Dispatch<React.SetStateAction<Note[]>>;
+    goToTimeStamp: (timeStamp: number) => void;
 }
 
-const NotesSection = ({videoId, handleAddNotes, currentTime, isAddingNotes, setIsAddingNotes, notes, setNotes}: NotesSectionProps) => {
+const NotesSection = ({videoId, handleAddNotes, currentTime, isAddingNotes, setIsAddingNotes, notes, setNotes, goToTimeStamp}: NotesSectionProps) => {
     const [inputNote, setInputNote] = useState('');
-    const {createNewNote} = useCreateNote({videoId, note: inputNote, currentTime});
+    const {createNewNote} = useCreateNote();
     
     const notesInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -30,11 +31,19 @@ const NotesSection = ({videoId, handleAddNotes, currentTime, isAddingNotes, setI
         }
     }, [isAddingNotes])
 
-    const handleNoteSubmit = async () => {
-        const newNote = createNewNote({videoId, note: inputNote, currentTime});
-        setNotes([...notes, newNote]);
-        setInputNote('');
-        setIsAddingNotes(false);
+    const handleAddNote = async () => {
+        if(isAddingNotes) {
+            const newNote = await createNewNote({
+                videoId, 
+                note: inputNote, 
+                currentTime
+            });
+            if(newNote) {
+                setNotes([...notes, newNote]);
+                setInputNote('');
+                setIsAddingNotes(false);
+            }
+        }
     }
 
     const handleNoteCancel = () => {
@@ -44,20 +53,27 @@ const NotesSection = ({videoId, handleAddNotes, currentTime, isAddingNotes, setI
 
     const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter') {
-            handleNoteSubmit();
+            handleAddNote();
         }
     }
 
     const handleInputBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+        e.stopPropagation();
         setIsAddingNotes(false);
     }
 
   return (
     <div className='Notes'>
-        <button className='Notes__addNotes-addBtn' onClick={handleAddNotes}>
-            <AddCircleOutlineIcon />
-            Add new note
-        </button>
+        <div className='Notes__header'>
+            <div className='Notes__text'>
+                <div className='Notes__text-heading'>My notes</div>
+                <div className='Notes__text-desc'>All your notes at a single place. Click on any note to go to specific timestamp in the video.</div>
+            </div>
+            <button className='Notes__addBtn' onClick={handleAddNotes}>
+                <AddCircleOutlineIcon />
+                Add new note
+            </button>
+        </div>
         <div className={`Notes__input ${!isAddingNotes&&'hidden'}`}>
             Timestamp: {Math.floor(currentTime/60)} min {Math.floor(currentTime%60)} sec
             <input 
@@ -68,15 +84,16 @@ const NotesSection = ({videoId, handleAddNotes, currentTime, isAddingNotes, setI
                 onKeyDown={handleInputKeyDown}
                 onBlur={handleInputBlur}
             />    
-            <button className='Notes__addNotes-submitBtn' onClick={handleNoteSubmit}>Add</button>
+            <button className='Notes__addNotes-submitBtn' onClick={handleAddNote}>Add</button>
             <button className='Notes__addNotes-cancelBtn' onClick={handleNoteCancel}>Cancel</button>
         </div>
-        
-        {notes.map((note) => (
-            <div key={note.id}>
-                <NoteCard note={note} setNotes={setNotes}/>
-            </div>
-        ))}
+        <div className='Notes__notesContainer'>
+            {notes.map((note) => (
+                <div key={note.id}>
+                    <NoteCard note={note} notes={notes} setNotes={setNotes} goToTimeStamp={goToTimeStamp} />
+                </div>
+            ))}
+        </div>
     </div>
   )
 }

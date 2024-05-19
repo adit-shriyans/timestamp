@@ -35,6 +35,26 @@
             text-transform: none;
         }
     }
+
+    &__video {
+        & .VideoPlayer {
+            display: flex;
+            flex-direction: row;
+
+            &__video {
+                width: fit-content;
+
+                & > div {
+                    width: fit-content !important;
+                }
+            }
+
+            &__notes {
+                width: calc(100% - 840px);
+                padding: 0.75rem;
+            }
+        }
+    }
 }
 
 .Root {

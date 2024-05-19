@@ -20,11 +20,10 @@ declare module 'next-auth' {
 
 const MyPage = () => {
   const [videoUrl, setVideoUrl] = useState('');
-  const [videoId, setVideoId] = useState('eRU4VMHSsv0');
+  const [videoId, setVideoId] = useState('');
   const [urlInputError, setUrlInputError] = useState(false);
-  const urlInputRef = useRef(null);
+  const urlInputRef = useRef<HTMLInputElement | null>(null);
   const { data: session } = useSession();
-  const router = useRouter();
 
   const handleVideoUrlSubmit = (e: React.FormEvent<HTMLFormElement> | React.KeyboardEvent<HTMLInputElement>): void => {
     e.preventDefault();
@@ -38,9 +37,11 @@ const MyPage = () => {
 
     // get video id from url
     const match = regex.exec(videoUrl);
-    console.log(regex, match);
     // handles case where video url contains list and index info
-    if(match && match[2]) setVideoId(match[2]);
+    if(match && match[2]) {
+      setVideoId(match[2]);
+      localStorage.setItem('videoId', match[2]);
+    }
   };
 
   const handleUrlInputBlur = (e: React.FocusEvent<HTMLInputElement>) => {
@@ -50,8 +51,17 @@ const MyPage = () => {
   const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       handleVideoUrlSubmit(e);
+      urlInputRef.current?.blur();
     }
   }
+
+  // save videoId in localStorage
+  useEffect(() => {
+    if(videoId === '') { 
+      const vidId = localStorage.getItem('videoId') || 'eRU4VMHSsv0';
+      setVideoId(vidId);
+    }
+  }, [videoId]);
 
   return (
     <div className="Page">
@@ -83,6 +93,5 @@ const MyPage = () => {
     </div>
   );
 };
-{/* <iframe width="914" height="514" src="https://www.youtube.com/embed/xNRJwmlRBNU" title="How To Embed YouTube Videos in React / Gatsby (and make them Responsive)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe> */}
 
 export default MyPage;
