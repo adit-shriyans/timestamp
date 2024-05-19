@@ -1,0 +1,9 @@
+@import '_variables.scss';
+
+.Notes {
+    &__input {
+        &.hidden {
+            display: none;
+        }
+    }
+}

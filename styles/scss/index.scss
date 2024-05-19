@@ -1,25 +1,7 @@
 @import '_variables.scss';
 
 .App {
-    width: 100%;
-
-    @media screen and (max-width: $screen-md) {
-        height: calc(100vh - 2rem);
-    }
-}
-
-.TripPage {
-    height: 100vh;
-    display: flex;
-    flex-direction: row;
-
-    @media screen and (max-width: $screen-md) {
-        height: calc(100vh - 2rem);
-    }
-    @media screen and (max-width: $screen-xs) {
-        display: flex;
-        flex-direction: column-reverse;
-    }
+    height: calc(100vh - 2rem);
 }
 
 .Page {
@@ -27,146 +9,35 @@
     width: 100%;
     display: flex;
     flex-direction: column;
-    background-color: #F1E4C3;
+    margin-left: 1rem;
 
-    &__demoImg {
-        width: 100%;
-        display: flex;
-        justify-content: center;
-
-        padding: 2vh 0;
-
-        & img {
-            height: 25.5vw;
-            width: auto;
-
-            @media screen and (max-width: $screen-md) {
-                height: 27.5vw;
-            }
-            @media screen and (max-width: $screen-sm) {
-                height: 28.5vw;
-            }
-            @media screen and (max-width: $screen-xs) {
-                height: 38vw;
-            }
-            @media screen and (max-width: $screen-xxs) {
-                height: 42vw;
-            }
-        }
+    &__heading {
+        font-size: 1.5rem;
     }
 
-    &__plan {
-        color: #AD8B73;
-        font-size: 1.25vw;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 5px;
+    &__videoInput {
         width: fit-content;
-        padding: 0.5vw 1vw;
-        margin: 0 auto;
-        margin-top: 1.5vw;
-        background-color: transparent;
-        border: 2px solid #e1bf8b;
-        cursor: pointer;
+        margin-top: 0.75rem;
+        margin-bottom: 1rem;
 
-        @media screen and (max-width: $screen-md) {
-            font-size: 1.5vw;
-        }
-        @media screen and (max-width: $screen-sm) {
-            font-size: 1.75vw;
-        }
-        @media screen and (max-width: $screen-xs) {
-            font-size: 2.25vw;
-        }
-        @media screen and (max-width: $screen-xxs) {
-            font-size: 2.75vw;
-        }
+        &-input {
+            margin-right: 0.5rem;
 
-        svg {
-            margin-right: 0.5vw;
-
-            @media screen and (max-width: $screen-md) {
-                
+            & > div > input {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.95rem;
+                width: 46rem;
             }
         }
-    }
 
-    &__trips {
-        display: flex;
-        margin: 0 auto;
-        flex-wrap: wrap;
-        width: 78vw;
-
-        @media screen and (max-width: $screen-md) {
-            width: 84vw;
-        }
-        @media screen and (max-width: $screen-sm) {
-            width: 93vw;
-        }
-        @media screen and (max-width: $screen-xs) {
-            width: 90vw;
+        &-submit {
+            width: fit-content;
+            text-transform: none;
         }
     }
-
-    fieldset {
-        margin-top: 2.5vw;
-        border: 2px solid transparent;
-        border-top-color: #4d2c2c;
-        color: #9c7b66;
-        box-sizing: border-box;
-        grid-area: 1 / 1;
-        padding: 18px;
-        padding-bottom: 0.5vw;
-        width: inherit;
-    }
-    
-    legend {
-        // font: 28pt/0 'sans-serif';
-        font-size: 2vw;
-        font-family: 'sans-serif';
-        margin: auto;
-        padding: 0 12px;
-
-        @media screen and (max-width: $screen-md) {
-            font-size: 2.25vw;
-        }
-        @media screen and (max-width: $screen-sm) {
-            font-size: 3vw;
-        }
-        @media screen and (max-width: $screen-xs) {
-            font-size: 4vw;
-        }
-    }
-
-    &__NA {
-        color: #4d2c2c;
-        margin: 0 auto;
-        font-size: 1rem;
-
-        @media screen and (max-width: $screen-md) {
-            font-size: 1.5vw;
-        }
-        @media screen and (max-width: $screen-sm) {
-            font-size: 1.75vw;
-        }
-        @media screen and (max-width: $screen-xs) {
-            font-size: 2.25vw;
-        }
-        @media screen and (max-width: $screen-xxs) {
-            font-size: 2.75vw;
-        }
-    }
-}
-
-.hidden {
-    display: none;
 }
 
 .Root {
     display: flex;
-
-    @media screen and (max-width: $screen-md) {
-        flex-direction: column;
-    }
+    flex-direction: column;
 }

@@ -1,15 +1,14 @@
 "use client";
 import '@styles/css/index.css'
-import { StatusType, TripType, VoidFunctionType } from '@assets/types/types';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import type { DefaultSession } from 'next-auth';
 import demoImg from '../assets/sitedemo.png';
 import Image from 'next/image';
 import TelegramIcon from '@mui/icons-material/Telegram';
-import TripCard from '@components/TripCard';
-import StatusSelector from '@components/StatusSelector';
+import VideoPlayer from '@components/VideoPlayer';
+import { Alert, Box, Button, Snackbar, TextField } from '@mui/material';
 
 declare module 'next-auth' {
   interface Session {
@@ -20,147 +19,70 @@ declare module 'next-auth' {
 }
 
 const MyPage = () => {
+  const [videoUrl, setVideoUrl] = useState('');
+  const [videoId, setVideoId] = useState('eRU4VMHSsv0');
+  const [urlInputError, setUrlInputError] = useState(false);
+  const urlInputRef = useRef(null);
   const { data: session } = useSession();
-  const {trips, tripLoading, setTripLoading, setTrips} = useTrips(session?.user?.id || '')
-  const [tripStatus, setTripStatus] = useState<String>('')
-
-  const showedTrips = useMemo(() => {
-    if (tripStatus === '') return trips;
-    return trips.filter((trip: TripType) => trip.status === tripStatus as StatusType | '');
-  }, [tripStatus, trips]);
-
   const router = useRouter();
 
-  useEffect(() => {
-    if(trips.length) setTripLoading(false);
-  }, [trips]);
+  const handleVideoUrlSubmit = (e: React.FormEvent<HTMLFormElement> | React.KeyboardEvent<HTMLInputElement>): void => {
+    e.preventDefault();
+    const regex = /(?:https?:\/\/)?(?:www\.)?youtu(?:\.be|be\.com)\/(watch\?v=)?([^\s&]+)/;
 
-  const handleCreateClick = async () => {
-    if(session && session.user && session.user.id) {
-      try {
-        const createTripResponse = await fetch("/api/trip/new", {
-          method: "POST",
-          body: JSON.stringify({
-            userId: session?.user?.id,
-            name: 'Trip Nameee',
-            status: "upcoming",
-          }),
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-
-        if (!createTripResponse.ok) {
-          console.error('Failed to create trip:', createTripResponse.statusText);
-          return;
-        }
-
-        const createdTrip = await createTripResponse.json();
-
-        router.push(`/trip/${createdTrip._id}`);
-      } catch (error) {
-        console.error('Error creating trip:', error);
-      }
+    //check if user input is a valid youtube video url
+    if (!regex.test(videoUrl)) {
+      setUrlInputError(true);
+      return;
     }
-    else {
-      alert("login first");
-    }
+
+    // get video id from url
+    const match = regex.exec(videoUrl);
+    console.log(regex, match);
+    // handles case where video url contains list and index info
+    if(match && match[2]) setVideoId(match[2]);
   };
 
-  const handleToggleClick = (slug: String) => {
-    if (slug === "one") setTripStatus('');
-    else if (slug === "two") setTripStatus('upcoming');
-    else if (slug === "three") setTripStatus('ongoing');
-    else if (slug === "four") setTripStatus('completed');
-    // filterTrips();
+  const handleUrlInputBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+    setUrlInputError(false);
+  };
+
+  const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handleVideoUrlSubmit(e);
+    }
   }
 
   return (
     <div className="Page">
-      <div className='Page__demoImg'>
-        <Image
-          src={demoImg}
-          alt='Demo'
+      <h1 className='Page__heading'>Video Player with Notes</h1>
+      <form onSubmit={handleVideoUrlSubmit} className='Page__videoInput'>
+        <TextField
+          label={urlInputError ? "Invalid YouTube URL" : "YouTube Video URL"}
+          variant="outlined"
+          value={videoUrl}
+          className='Page__videoInput-input'
+          onChange={(e) => setVideoUrl(e.target.value)}
+          placeholder='Enter video URL'
+          required
+          onKeyDown={handleInputKeyDown}
+          InputLabelProps={{
+            shrink: true,
+          }}
+          ref={urlInputRef}
+          error={urlInputError}
+          onBlur={handleUrlInputBlur}
         />
-      </div>
-      <button className='Page__plan' onClick={handleCreateClick}>
-        <TelegramIcon />
-        Plan a Trip!
-      </button>
-      <div className='Page__userTrips'>
-        <div className='Page__heading'>
-          <fieldset>
-            <legend>
-              Your Trips
-            </legend>
-          </fieldset>
-        </div>
-        <div className='Page__statusToggle'>
-          <StatusSelector
-            onSelectedItem={(item: { slug: "one" | "two" | "three" | "four"; }) => {
-              handleToggleClick(item.slug);
-            }}
-          />
-        </div>
-        <div className='Page__trips'>
-          {showedTrips.length !== 0 ? (
-            showedTrips.map((trip: TripType) => (
-              <TripCard key={trip._id} trip={trip} trips={trips} setTrips={setTrips} />
-            ))) :
-            (
-              <div className='Page__NA'>
-                {session?.user.id ? 
-                  tripLoading?(
-                    'loading...'
-                  ):
-                  trips.length ? (
-                  `No ${tripStatus} trips`
-                ) : (
-                  'No trips planned'
-                ) :
-                (
-                  'Login to view your trips'
-                )}
-              </div>
-            )
-          }
-        </div>
+        <Button type="submit" variant="contained" color="primary" className='Page__videoInput-submit'>
+          Watch
+        </Button>
+      </form>
+      <div className='Page__video'>
+        <VideoPlayer videoId={videoId}/>
       </div>
     </div>
   );
 };
-
-const useTrips = (userId: String) => {
-  const [trips, setTrips] = useState<TripType[]>([]);
-  const [tripLoading, setTripLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchTrips = async () => {
-      if (userId) {
-        try {
-          const response = await fetch(`/api/trip/user/${userId}`);
-          const data = await response.json();
-
-          const allTrips = data.map((trip: TripType) => ({
-            _id: trip._id,
-            name: trip.name || 'Your Trip',
-            stops: [],
-            status: trip.status,
-          }));
-
-          setTrips(allTrips);
-        } catch (error) {
-          console.error('Error fetching trips:', error);
-        } finally {
-          setTripLoading(false);
-        }
-      }
-    };
-
-    fetchTrips();
-  }, [userId]);
-
-  return { trips, tripLoading, setTripLoading, setTrips };
-}
+{/* <iframe width="914" height="514" src="https://www.youtube.com/embed/xNRJwmlRBNU" title="How To Embed YouTube Videos in React / Gatsby (and make them Responsive)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe> */}
 
 export default MyPage;
