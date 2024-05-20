@@ -1,10 +1,10 @@
 "use client";
-import '@styles/css/index.css'
 import { useEffect, useRef, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import type { DefaultSession } from 'next-auth';
 import VideoPlayer from '@components/VideoPlayer';
 import { Alert, Box, Button, Snackbar, TextField } from '@mui/material';
+import '@styles/css/index.css';
 
 declare module 'next-auth' {
   interface Session {
@@ -25,22 +25,23 @@ const MyPage = () => {
     e.preventDefault();
     const regex = /(?:https?:\/\/)?(?:www\.)?youtu(?:\.be|be\.com)\/(watch\?v=)?([^\s&]+)/;
 
-    //check if user input is a valid youtube video url
+    // Check if user input is a valid YouTube video URL
     if (!regex.test(videoUrl)) {
       setUrlInputError(true);
       return;
     }
 
-    // get video id from url
+    // Get video ID from URL
     const match = regex.exec(videoUrl);
-    // handles case where video url contains list and index info
-    if(match && match[2]) {
+    // Handles case where video URL contains list and index info
+    if (match && match[2]) {
       setVideoId(match[2]);
       localStorage.setItem('videoId', match[2]);
+      setVideoUrl(''); // Clear the input field after setting the video ID
     }
   };
 
-  const handleUrlInputBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+  const handleUrlInputBlur = () => {
     setUrlInputError(false);
   };
 
@@ -51,13 +52,13 @@ const MyPage = () => {
     }
   }
 
-  // save videoId in localStorage
+  // Load video ID from localStorage
   useEffect(() => {
-    if(videoId === '') { 
+    if (videoId === '') { 
       const vidId = localStorage.getItem('videoId') || 'eRU4VMHSsv0';
       setVideoId(vidId);
     }
-  }, [videoId]);
+  }, []);
 
   return (
     <div className="Page">
@@ -84,7 +85,7 @@ const MyPage = () => {
         </Button>
       </form>
       <div className='Page__video'>
-        <VideoPlayer videoId={videoId}/>
+        <VideoPlayer videoId={videoId} />
       </div>
     </div>
   );
