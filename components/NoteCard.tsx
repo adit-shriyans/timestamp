@@ -1,3 +1,5 @@
+'use client'
+
 import React, { useState } from 'react';
 import { Note } from '@assets/types/types';
 import useDeleteNote from '@hooks/useDeleteNote';
