@@ -65,11 +65,6 @@ const VideoPlayer = ({ videoId, setVideoTitle }: VideoPlayerPropsI) => {
   }, [session]);
 
   useEffect(() => {
-    // console.log(videoId);
-    
-  }, [videoId]);
-
-  useEffect(() => {
     fetchNotes();
   }, [videoId, session]);
 
@@ -79,7 +74,7 @@ const VideoPlayer = ({ videoId, setVideoTitle }: VideoPlayerPropsI) => {
     // sort filteredNotes in ascending order of timestamp
     const sortedNotes = filteredNotes.sort((a, b) => a.timeStamp - b.timeStamp);
     setNotes(sortedNotes);
-  }, [allUserNotes, videoId]);
+  }, [ videoId, allUserNotes, videoId]);
 
   useEffect(() => {
     //sort notes in ascending order of timestamp
@@ -128,7 +123,7 @@ const VideoPlayer = ({ videoId, setVideoTitle }: VideoPlayerPropsI) => {
   return (
     <div className='VideoPlayer'>
       <div className='VideoPlayer__video'>
-        <YouTube videoId={videoId} opts={opts} onReady={onPlayerReady} style={{ width: '100vw', height: 'auto' }} />
+        {videoId && <YouTube videoId={videoId} opts={opts} onReady={onPlayerReady} style={{ width: '100vw', height: 'auto' }} />}
       </div>
       <div className='VideoPlayer__notes'>
         <NotesSection
