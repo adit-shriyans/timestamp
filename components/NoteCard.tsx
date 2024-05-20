@@ -31,7 +31,7 @@ const NoteCard = ({note, notes, setNotes, goToTimeStamp}: NoteProps) => {
   const editInputRef = useRef<HTMLInputElement | null>(null)
 
   const handleEditSave = async () => {
-    if(edittedNote) {
+    if(edittedNote !== '') {
       const date = new Date();
       const isEditted = await editNote({id: note.id, msg: edittedNote, date});
       if(isEditted) {
