@@ -31,16 +31,18 @@ const NoteCard = ({note, notes, setNotes, goToTimeStamp}: NoteProps) => {
   const editInputRef = useRef<HTMLInputElement | null>(null)
 
   const handleEditSave = async () => {
-    const date = new Date();
-    const isEditted = await editNote({id: note.id, msg: edittedNote, date});
-    if(isEditted) {
-      // change the editted note in "notes" state 
-      const newNotes = notes.map(n => n.id === note.id? {...n, note: edittedNote, date} : n);
-      setNotes(newNotes);
-      setIsEditting(false);
-    }
-    else {
-      console.error("failed to edit note ", note.id);
+    if(edittedNote) {
+      const date = new Date();
+      const isEditted = await editNote({id: note.id, msg: edittedNote, date});
+      if(isEditted) {
+        // change the editted note in "notes" state 
+        const newNotes = notes.map(n => n.id === note.id? {...n, note: edittedNote, date} : n);
+        setNotes(newNotes);
+        setIsEditting(false);
+      }
+      else {
+        console.error("failed to edit note ", note.id);
+      }
     }
   }
 

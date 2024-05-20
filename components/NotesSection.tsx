@@ -33,7 +33,7 @@ const NotesSection = ({videoId, handleAddNotes, currentTime, isAddingNotes, setI
 
     const handleAddNote = async (e:  React.MouseEvent<HTMLButtonElement> | React.KeyboardEvent<HTMLInputElement>) => {
         e.stopPropagation();
-        if(isAddingNotes) {
+        if(isAddingNotes && inputNote !== '') {
             const newNote = await createNewNote({
                 videoId, 
                 note: inputNote, 
