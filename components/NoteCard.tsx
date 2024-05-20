@@ -6,6 +6,18 @@ import useDeleteNote from '@hooks/useDeleteNote';
 import useEditNote from '@hooks/useEditNote';
 import '@styles/css/NoteCard.css';
 
+/*
+  @Params: 
+    - note: Note to be displayed by this component
+    - notes: array of notes to be displayed
+    - setNotes: React.Dispatch<React.SetStateAction<Note[]>>
+    - goToTimeStamp: function to seek to a time stamp in the video
+
+  @State: 
+    - isEditting: boolean to determine if the note is currently being editted
+    - edittedNote: editted note input by the user (default: previous note)
+*/ 
+
 interface NoteProps {
     note: Note;
     notes: Note[];
@@ -13,11 +25,12 @@ interface NoteProps {
     goToTimeStamp: (timeStamp: number) => void;
 }
 
+// function to convert Date object to string of format DD Month 'last 2 digits of year
 const formatDate = (noteDate: Date): string => {
   const date = new Date(noteDate);
   const day = date.getDate();
-  const month = date.toLocaleString('default', { month: 'short' }); // 'May'
-  const year = date.getFullYear().toString().slice(-2); // Extract last 2 digits
+  const month = date.toLocaleString('default', { month: 'short' }); 
+  const year = date.getFullYear().toString().slice(-2);
 
   return `${day} ${month} '${year}`;
 }
@@ -25,15 +38,17 @@ const formatDate = (noteDate: Date): string => {
 const NoteCard = ({note, notes, setNotes, goToTimeStamp}: NoteProps) => {
   const [isEditting, setIsEditting] = useState(false);
   const [edittedNote, setEdittedNote] = useState(note.note);
+
   const { deleteNote } = useDeleteNote();
   const { editNote } = useEditNote();
 
   const editInputRef = useRef<HTMLInputElement | null>(null)
 
+  // saves editted note if user input (edittedNote) isnt empty string
   const handleEditSave = async () => {
     if(edittedNote !== '') {
       const date = new Date();
-      const isEditted = await editNote({id: note.id, msg: edittedNote, date});
+      const isEditted = await editNote({id: note.id, msg: edittedNote, date}); // boolean to check if note is editted successfully
       if(isEditted) {
         // change the editted note in "notes" state 
         const newNotes = notes.map(n => n.id === note.id? {...n, note: edittedNote, date} : n);
@@ -46,17 +61,19 @@ const NoteCard = ({note, notes, setNotes, goToTimeStamp}: NoteProps) => {
     }
   }
 
+  // set isEditting to true indicating user is editing a note
   const handleEditClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     setIsEditting(true);
   }
 
+  // cancel editting, without reseting edittedNote
   const handleEditCancel = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
-    setEdittedNote(note.note);
     setIsEditting(false);
   }
 
+  // deleting  note
   const handleDelete = async (e:  React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     const isDeleted = await deleteNote({id: note.id});
@@ -66,6 +83,7 @@ const NoteCard = ({note, notes, setNotes, goToTimeStamp}: NoteProps) => {
     }
   }
 
+  // save note if user presses enter in input field
   const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     e.stopPropagation();
     if(e.key === 'Enter') {
@@ -73,11 +91,7 @@ const NoteCard = ({note, notes, setNotes, goToTimeStamp}: NoteProps) => {
     }
   }
 
-  const handleInputBlur = (e: React.FocusEvent<HTMLInputElement>) => {
-    e.stopPropagation();
-    setIsEditting(false);
-  }
-
+  // focus on input field when user clicks on Edit button
   useEffect(() => {
     if (isEditting && editInputRef.current) {
         editInputRef.current.focus();
@@ -86,7 +100,7 @@ const NoteCard = ({note, notes, setNotes, goToTimeStamp}: NoteProps) => {
 
   return (
     <div className='NoteCard'>
-      <div className='NoteCard__timestamp'>
+      <div className='NoteCard__timestamp'> {/* last edit date and timestamp of video */}
         <div className='NoteCard__timestamp-date'>
           {formatDate(note.date)}
         </div>
@@ -97,13 +111,12 @@ const NoteCard = ({note, notes, setNotes, goToTimeStamp}: NoteProps) => {
           </span>
         </div>
       </div>
-      <div className='NoteCard__note-container'>
+      <div className='NoteCard__note-container'> {/* display note if not editting, display input otherwise */}
         {isEditting ? (
             <input 
               value={edittedNote}
               className='NoteCard__note-input'
               onChange={(e) => setEdittedNote(e.target.value)}
-              // onBlur={handleInputBlur}
               ref={editInputRef}
               onKeyDown={handleInputKeyDown} 
             />
@@ -114,7 +127,7 @@ const NoteCard = ({note, notes, setNotes, goToTimeStamp}: NoteProps) => {
           )
         }
       </div>
-      <div className='NoteCard__btns'>
+      <div className='NoteCard__btns'> {/* Display "Edit" and "Delete" if not editting; display "Save" and "Cancel" if editting */}
         {isEditting ? (
           <>
             <button 

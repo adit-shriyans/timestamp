@@ -3,6 +3,15 @@ import { useSession } from 'next-auth/react';
 import { v4 as uuid } from 'uuid';
 import { Note } from '@assets/types/types';
 
+/* 
+  -Takes in { videoId, 
+              the note written,
+              current time }
+  -Saves note to database if user is logged in
+  -Saves note to local storage if user isn't logged in
+  -Returns the note that was saved to the database or local storage
+*/
+
 interface CreateNotePropsType {
   videoId: string;
   note: string;

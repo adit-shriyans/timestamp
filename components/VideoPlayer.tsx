@@ -6,10 +6,22 @@ import NotesSection from './NotesSection';
 import { Note } from '@assets/types/types';
 import { useSession } from 'next-auth/react';
 
+/*
+  @Props: 
+    - VideoId: id of the video currently playing
+    - setVideoTitle: function to get title of video currently playing (videoTitle displayed in parent component page.tsx)
+
+  @State:
+    - currentTime: time in seconds at the moment "Add new note" button (NotesSection.tsx) is clicked
+    - isAddingNotes: boolean to determine if user is adding notes to video
+    - allUserNotes: * array of all the notes user has ever made if logged in
+                    * array of all the notes in local storage if not logged in
+    - notes: array of notes for the current videoId
+*/
+
 interface VideoPlayerPropsI {
   videoId: string;
   setVideoTitle: React.Dispatch<React.SetStateAction<string>>;
-  setVideoDescription: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const VideoPlayer = ({ videoId, setVideoTitle }: VideoPlayerPropsI) => {
@@ -17,6 +29,7 @@ const VideoPlayer = ({ videoId, setVideoTitle }: VideoPlayerPropsI) => {
   const [isAddingNotes, setIsAddingNotes] = useState(false);
   const [allUserNotes, setAllUserNotes] = useState<Note[]>([]);
   const [notes, setNotes] = useState<Note[]>([]);
+   
   const { data: session } = useSession();
   const playerRef = useRef<YouTubePlayer | null>(null);
 
@@ -35,7 +48,7 @@ const VideoPlayer = ({ videoId, setVideoTitle }: VideoPlayerPropsI) => {
   };
 
   const fetchNotes = useCallback(async () => {
-    if (session && session.user) {
+    if (session && session.user) { // fetch notes from database if user is logged in
       try {
         const res = await fetch(`/api/note/${session.user.id}`);
         const data = await res.json();
@@ -45,7 +58,7 @@ const VideoPlayer = ({ videoId, setVideoTitle }: VideoPlayerPropsI) => {
         console.log(err);
         setAllUserNotes([])
       }
-    } else {
+    } else { // fetch notes from local storage if user isnt logged in
       const localNotes = JSON.parse(localStorage.getItem('notes') || '[]');
       setAllUserNotes(localNotes);
     }
@@ -69,13 +82,15 @@ const VideoPlayer = ({ videoId, setVideoTitle }: VideoPlayerPropsI) => {
     setNotes(sortedNotes);
   }, [notes]);
 
-  const handleAddNotes = (e: React.MouseEvent) => {
+  // function to just check if note can be added -> isAddingNotes = true if all checks are successful and it is safe to add new note
+  const addNoteCheck = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (playerRef.current) {
       const currentTime = playerRef.current.getCurrentTime();
+      // check if a note already exists at the current time stamp
       const timeStampExists = notes.find(note => Math.floor(note.timeStamp) === Math.floor(currentTime));
 
-      if (!timeStampExists && [1, 2, 3].includes(playerRef.current.getPlayerState())) { // to check if player is playing(1), paused(2) or buffering(3)
+      if (!timeStampExists && [1, 2, 3].includes(playerRef.current.getPlayerState())) { // to check if note already exists at this timestamp and video is playing(1), paused(2) or buffering(3)
         playerRef.current.pauseVideo();
         setCurrentTime(currentTime);
         setIsAddingNotes(true);
@@ -113,7 +128,7 @@ const VideoPlayer = ({ videoId, setVideoTitle }: VideoPlayerPropsI) => {
       <div className='VideoPlayer__notes'>
         <NotesSection
           videoId={videoId}
-          handleAddNotes={handleAddNotes}
+          addNoteCheck={addNoteCheck}
           currentTime={currentTime}
           isAddingNotes={isAddingNotes}
           setIsAddingNotes={setIsAddingNotes}

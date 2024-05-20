@@ -3,8 +3,16 @@ import { useEffect, useRef, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import type { DefaultSession } from 'next-auth';
 import VideoPlayer from '@components/VideoPlayer';
-import { Alert, Box, Button, Snackbar, TextField } from '@mui/material';
+import { Button, TextField } from '@mui/material';
 import '@styles/css/index.css';
+
+/* 
+  @States: 
+    - videoUrl: string --> user input -> url of the video
+    - videoId: string --> get from videoUrl (default: eRU4VMHSsv0)
+    - videoTitle: string --> get from videoId / videoUrl
+    - urlInputError: boolean --> check if user input is a valid YouTube video URL
+*/
 
 declare module 'next-auth' {
   interface Session {
@@ -18,11 +26,10 @@ const MyPage = () => {
   const [videoUrl, setVideoUrl] = useState('');
   const [videoId, setVideoId] = useState('');
   const [videoTitle, setVideoTitle] = useState('');
-  const [videoDescription, setVideoDescription] = useState('');
   const [urlInputError, setUrlInputError] = useState(false);
   const urlInputRef = useRef<HTMLInputElement | null>(null);
-  const { data: session } = useSession();
 
+  // performs checks on the input value and returns videoId if URL is valid
   const handleVideoUrlSubmit = (e: React.FormEvent<HTMLFormElement> | React.KeyboardEvent<HTMLInputElement>): void => {
     e.preventDefault();
     const regex = /(?:https?:\/\/)?(?:www\.)?youtu(?:\.be|be\.com)\/(watch\?v=)?([^\s&]+)/;
@@ -35,18 +42,21 @@ const MyPage = () => {
 
     // Get video ID from URL
     const match = regex.exec(videoUrl);
-    // Handles case where video URL contains list and index info
     if (match && match[2]) {
       setVideoId(match[2]);
       localStorage.setItem('videoId', match[2]);
+
+      // clear input after getting video ID
       setVideoUrl('');
     }
   };
 
+  // remove error from input if user clicks outside the form
   const handleUrlInputBlur = () => {
     setUrlInputError(false);
   };
 
+  // submit video url
   const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       handleVideoUrlSubmit(e);
@@ -64,7 +74,7 @@ const MyPage = () => {
 
   return (
     <div className="Page">
-      <div className='Page__header'>
+      <div className='Page__header'> {/* Page heading; URL input form; Video Title */}
         <div>
           <h1 className='Page__heading'>Video Player with Notes</h1>
           <form onSubmit={handleVideoUrlSubmit} className='Page__videoInput'>
@@ -98,8 +108,8 @@ const MyPage = () => {
             </div>
         </div>
       </div>
-      <div className='Page__video'>
-        <VideoPlayer videoId={videoId} setVideoTitle={setVideoTitle} setVideoDescription={setVideoDescription} />
+      <div className='Page__video'> {/* Video and notes */}
+        <VideoPlayer videoId={videoId} setVideoTitle={setVideoTitle} />
       </div>
     </div>
   );

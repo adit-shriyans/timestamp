@@ -2,6 +2,13 @@ import { useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 import { Note } from '@assets/types/types';
 
+/* 
+  -Takes in { note id }
+  -Deletes note from database is user is logged in
+  -Deletes note from local storage if user isn't logged in
+  -Returns true if note was successfully deleted, false if not
+*/
+
 interface DeleteNotePropsType {
     id: string;
 }

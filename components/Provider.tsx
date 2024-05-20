@@ -4,6 +4,10 @@ import { ReactNode, useEffect } from 'react';
 import { SessionProvider } from 'next-auth/react';
 import { Session } from 'next-auth';
 
+/* 
+  to save the session state once user Logs in
+*/
+
 interface ProviderPropsType {
   children: ReactNode;
   session: Session | null | undefined;

@@ -7,6 +7,10 @@ import { signIn, signOut, useSession, getProviders, LiteralUnion, ClientSafeProv
 import { BuiltInProviderType } from 'next-auth/providers/index';
 import '../styles/css/Navbar.css';
 
+/* 
+    for logging in and out only
+*/
+
 const Navbar = () => {
     const { data: session } = useSession();
 

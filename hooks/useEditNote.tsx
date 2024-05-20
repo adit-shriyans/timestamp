@@ -2,6 +2,15 @@ import { useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 import { Note } from '@assets/types/types';
 
+/* 
+  -Takes in { note id,
+              new note message,
+              edit Date object }
+  -Edits a note from database if user is logged in
+  -Edits a note from local storage if user isn't logged in
+  -Returns true if editted successfully, false if not
+*/
+
 interface UpdateNotePropsType {
   id: string;
   msg: string;

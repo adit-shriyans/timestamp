@@ -31,13 +31,13 @@
   display: none;
 }
 .Notes__header-timestamp {
-  font-family: "Inter";
+  font-family: var(--font-inter, "Inter", sans-serif);
   font-size: 0.875rem;
   font-weight: 400;
   margin-bottom: 0.5rem;
 }
 .Notes__text {
-  font-family: "Inter";
+  font-family: var(--font-inter, "Inter", sans-serif);
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
@@ -61,7 +61,7 @@
   border-radius: 0.5rem;
   padding: 0.5rem 1rem 0.5rem 0.875rem;
   gap: 0.5rem;
-  font-family: "Inter";
+  font-family: var(--font-inter, "Inter", sans-serif);
   font-size: 0.875rem;
   cursor: pointer;
 }
