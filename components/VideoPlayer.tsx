@@ -65,6 +65,11 @@ const VideoPlayer = ({ videoId, setVideoTitle }: VideoPlayerPropsI) => {
   }, [session]);
 
   useEffect(() => {
+    // console.log(videoId);
+    
+  }, [videoId]);
+
+  useEffect(() => {
     fetchNotes();
   }, [videoId, session]);
 

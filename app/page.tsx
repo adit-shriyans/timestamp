@@ -42,11 +42,15 @@ const MyPage = () => {
 
     // Get video ID from URL
     const match = regex.exec(videoUrl);
-    if (match && match[2]) {
+    if (match && match[2] !== '' && match[2] !== videoId) {
       setVideoId(match[2]);
       localStorage.setItem('videoId', match[2]);
 
       // clear input after getting video ID
+      setVideoUrl('');
+    }
+    else if(match && match[2] == videoId) {
+      alert('Video already playing');
       setVideoUrl('');
     }
   };

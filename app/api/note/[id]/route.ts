@@ -2,6 +2,7 @@ import { connectToDB } from '@utils/database';
 import Note from '@models/note';
 import { NextRequest } from 'next/server';
 
+// Takes in userId and returns all the notes user has created for all videos
 export const GET = async (request: Request | NextRequest, { params }: { params: { id: string } }) => {
     try {
         await connectToDB();
@@ -15,6 +16,8 @@ export const GET = async (request: Request | NextRequest, { params }: { params: 
     }
 }
 
+
+// takes in note Id, new note and current date and returns editted note with new note messsage and new date(latest change date)
 export const PATCH = async (request: Request | NextRequest, { params }: { params: { id: string } }) => {
     const { note, date } = await request.json();
 
@@ -38,7 +41,7 @@ export const PATCH = async (request: Request | NextRequest, { params }: { params
     }
 };
 
-// DELETE
+// DELETE note based on note id
 export const DELETE = async (request: Request | NextRequest, { params }: { params: { id: string } }) => {
     const {id} = params;
     try {
