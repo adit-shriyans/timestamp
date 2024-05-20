@@ -1,12 +1,8 @@
 "use client";
 import '@styles/css/index.css'
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { usePathname, useRouter } from 'next/navigation';
+import { useEffect, useRef, useState } from 'react';
 import { useSession } from 'next-auth/react';
 import type { DefaultSession } from 'next-auth';
-import demoImg from '../assets/sitedemo.png';
-import Image from 'next/image';
-import TelegramIcon from '@mui/icons-material/Telegram';
 import VideoPlayer from '@components/VideoPlayer';
 import { Alert, Box, Button, Snackbar, TextField } from '@mui/material';
 
