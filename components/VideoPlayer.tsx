@@ -8,9 +8,11 @@ import { useSession } from 'next-auth/react';
 
 interface VideoPlayerPropsI {
   videoId: string;
+  setVideoTitle: React.Dispatch<React.SetStateAction<string>>;
+  setVideoDescription: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const VideoPlayer = ({ videoId }: VideoPlayerPropsI) => {
+const VideoPlayer = ({ videoId, setVideoTitle }: VideoPlayerPropsI) => {
   const [currentTime, setCurrentTime] = useState(0);
   const [isAddingNotes, setIsAddingNotes] = useState(false);
   const [allUserNotes, setAllUserNotes] = useState<Note[]>([]);
@@ -20,6 +22,8 @@ const VideoPlayer = ({ videoId }: VideoPlayerPropsI) => {
 
   const onPlayerReady = (event: YouTubeEvent) => {
     playerRef.current = event.target;
+    const videoTitle = playerRef.current.getVideoData().title;
+    setVideoTitle(videoTitle);
   };
 
   const opts = {
@@ -33,11 +37,13 @@ const VideoPlayer = ({ videoId }: VideoPlayerPropsI) => {
   const fetchNotes = useCallback(async () => {
     if (session && session.user) {
       try {
-        const res = await fetch(`/api/notes/${session.user.id}`);
+        const res = await fetch(`/api/note/${session.user.id}`);
         const data = await res.json();
-        setAllUserNotes(data);
+        const savedNotes = data.map((note: { _id: any; videoId: any; note: any; timeStamp: any; date: any; }) => ({id: note._id, videoId: note.videoId, note: note.note, timeStamp: note.timeStamp, date: note.date}))
+        setAllUserNotes(savedNotes);
       } catch (err) {
         console.log(err);
+        setAllUserNotes([])
       }
     } else {
       const localNotes = JSON.parse(localStorage.getItem('notes') || '[]');
@@ -47,26 +53,40 @@ const VideoPlayer = ({ videoId }: VideoPlayerPropsI) => {
 
   useEffect(() => {
     fetchNotes();
-  }, [fetchNotes, videoId]);
+  }, [videoId, session]);
 
   useEffect(() => {
     // get notes for the loaded video
     const filteredNotes = allUserNotes.filter(note => note.videoId === videoId);
-    setNotes(filteredNotes);
+    // sort filteredNotes in ascending order of timestamp
+    const sortedNotes = filteredNotes.sort((a, b) => a.timeStamp - b.timeStamp);
+    setNotes(sortedNotes);
   }, [allUserNotes, videoId]);
 
-  const handleAddNotes = () => {
+  useEffect(() => {
+    //sort notes in ascending order of timestamp
+    const sortedNotes = notes.sort((a, b) => a.timeStamp - b.timeStamp);
+    setNotes(sortedNotes);
+  }, [notes]);
+
+  const handleAddNotes = (e: React.MouseEvent) => {
+    e.stopPropagation();
     if (playerRef.current) {
       const currentTime = playerRef.current.getCurrentTime();
       const timeStampExists = notes.find(note => Math.floor(note.timeStamp) === Math.floor(currentTime));
 
-      if (!timeStampExists && [1, 2, 3].includes(playerRef.current.getPlayerState())) {
+      if (!timeStampExists && [1, 2, 3].includes(playerRef.current.getPlayerState())) { // to check if player is playing(1), paused(2) or buffering(3)
         playerRef.current.pauseVideo();
         setCurrentTime(currentTime);
         setIsAddingNotes(true);
-      } else if (timeStampExists) {
+      } 
+      else if (timeStampExists) {
         alert("A note already exists at this timeStamp.");
-      } else if (playerRef.current.getPlayerState() === 5) {
+      } 
+      else if (playerRef.current.getPlayerState() === 0) { // if video has ended
+        alert("Video already ended.");
+      }
+      else if (playerRef.current.getPlayerState() === 5) { // if player is cued but isnt playing
         alert("Play the video first.");
       }
     }
@@ -74,8 +94,7 @@ const VideoPlayer = ({ videoId }: VideoPlayerPropsI) => {
 
   const goToTimeStamp = (timeStamp: number) => {
     if (playerRef.current) {
-      playerRef.current.seekTo(timeStamp);
-      playerRef.current.playVideo();
+      playerRef.current.seekTo(timeStamp, true);
       playerRef.current.pauseVideo();
     }
   };

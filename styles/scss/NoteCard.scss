@@ -1,0 +1,67 @@
+@import '_variables.scss';
+
+.NoteCard {
+    margin-top: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid $border-color;
+    font-family: $font-family;
+    font-size: $font-size-md;
+
+    &__timestamp {
+        &-date {
+            font-weight: 500;
+            line-height: 1.25rem;
+        }
+        &-time {
+            font-weight: 400;
+            line-height: 1.25rem;
+
+            &-stamp {
+                color: $font-color-purple;
+                cursor: pointer;
+                margin-left: 0.25rem;
+            }
+        }
+    }
+
+    &__note {
+        border: 1px solid $border-color;
+        border-radius: 0 0.5rem 0.5rem 0.5rem;
+        padding: 0.75rem;
+        font-size: $font-size-md;
+        background-color: transparent;
+        margin: 0.5rem 0;
+    
+        &-input {
+            margin: 0.5rem 0;
+            border: 1px solid $border-color;
+            border-radius: 0 0.5rem 0.5rem 0.5rem;
+            padding: 0.75rem;
+            font-size: $font-size-md;
+            background-color: transparent;
+            outline: none;
+            width: calc(100% - 1.5rem);
+        }
+    }
+
+    &__btns {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 0.25rem;
+
+        &>*{
+            background-color: transparent;
+            border: 1px solid $border-color;
+            border-radius: 0.5rem;
+            padding: 0.25rem 0.625rem;
+            font-size: $font-size-md;
+            cursor: pointer;
+
+            &:active {
+                background-color: $btn-active-color;
+            }
+        }
+    }
+}

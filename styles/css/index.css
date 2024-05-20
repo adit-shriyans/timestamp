@@ -1,20 +1,35 @@
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
 .App {
-  height: calc(100vh - 2rem);
+  padding: 0 1rem;
+  display: flex;
+  align-items: center;
 }
 
 .Page {
-  min-height: 100vh;
   width: 100%;
   display: flex;
   flex-direction: column;
-  margin-left: 1rem;
+}
+.Page__header {
+  display: flex;
+}
+.Page__vidData {
+  padding: 1rem;
+  font-family: "Inter";
+  font-size: 1.125rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+}
+.Page__vidData-title {
+  font-size: 1.125rem;
 }
 .Page__heading {
   font-size: 1.5rem;
+  font-family: "Inter";
 }
 .Page__videoInput {
-  width: fit-content;
+  display: flex;
   margin-top: 0.75rem;
   margin-bottom: 1rem;
 }
@@ -42,7 +57,7 @@
 }
 .Page__video .VideoPlayer__notes {
   width: calc(100% - 840px);
-  padding: 0.75rem;
+  padding: 0 0.75rem;
 }
 
 .Root {

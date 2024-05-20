@@ -4,22 +4,43 @@
   border: 1px solid #EAECF0;
   border-radius: 0.5rem;
 }
-.Notes__input.hidden {
-  display: none;
-}
 .Notes__header {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid #EAECF0;
+}
+.Notes__header-main {
   display: flex;
   flex-direction: row;
   align-items: center;
   gap: 2rem;
-  padding-bottom: 1.25rem;
-  border-bottom: 1px solid #EAECF0;
 }
-.Notes__header > * {
+.Notes__header-main > * {
   flex: 1;
+}
+.Notes__header-input {
+  margin-top: 0.75rem;
+  border-top: 1px solid #EAECF0;
+  padding-top: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+.Notes__header-input.hidden {
+  display: none;
+}
+.Notes__header-timestamp {
+  font-family: "Inter";
+  font-size: 0.875rem;
+  font-weight: 400;
+  margin-bottom: 0.5rem;
 }
 .Notes__text {
   font-family: "Inter";
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
 }
 .Notes__text-heading {
   font-weight: 600;
@@ -50,4 +71,31 @@
 .Notes__addBtn > svg {
   width: 1.25rem;
   height: 1.25rem;
+}
+.Notes__addNotes-input {
+  margin-bottom: 0.25rem;
+  border: 1px solid #EAECF0;
+  border-radius: 0 0.5rem 0.5rem 0.5rem;
+  padding: 0.75rem;
+  font-size: 0.875rem;
+  background-color: transparent;
+  outline: none;
+}
+.Notes__addNotes-btns {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.25rem;
+}
+.Notes__addNotes-btns > * {
+  background-color: transparent;
+  border: 1px solid #EAECF0;
+  border-radius: 0.5rem;
+  padding: 0.25rem 0.625rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+.Notes__addNotes-btns > *:active {
+  background-color: #f4f4f4;
 }

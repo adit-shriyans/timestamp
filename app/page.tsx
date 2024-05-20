@@ -17,6 +17,8 @@ declare module 'next-auth' {
 const MyPage = () => {
   const [videoUrl, setVideoUrl] = useState('');
   const [videoId, setVideoId] = useState('');
+  const [videoTitle, setVideoTitle] = useState('');
+  const [videoDescription, setVideoDescription] = useState('');
   const [urlInputError, setUrlInputError] = useState(false);
   const urlInputRef = useRef<HTMLInputElement | null>(null);
   const { data: session } = useSession();
@@ -62,30 +64,42 @@ const MyPage = () => {
 
   return (
     <div className="Page">
-      <h1 className='Page__heading'>Video Player with Notes</h1>
-      <form onSubmit={handleVideoUrlSubmit} className='Page__videoInput'>
-        <TextField
-          label={urlInputError ? "Invalid YouTube URL" : "YouTube Video URL"}
-          variant="outlined"
-          value={videoUrl}
-          className='Page__videoInput-input'
-          onChange={(e) => setVideoUrl(e.target.value)}
-          placeholder='Enter video URL'
-          required
-          onKeyDown={handleInputKeyDown}
-          InputLabelProps={{
-            shrink: true,
-          }}
-          ref={urlInputRef}
-          error={urlInputError}
-          onBlur={handleUrlInputBlur}
-        />
-        <Button type="submit" variant="contained" color="primary" className='Page__videoInput-submit'>
-          Watch
-        </Button>
-      </form>
+      <div className='Page__header'>
+        <div>
+          <h1 className='Page__heading'>Video Player with Notes</h1>
+          <form onSubmit={handleVideoUrlSubmit} className='Page__videoInput'>
+            <TextField
+              label={urlInputError ? "Invalid YouTube URL" : "YouTube Video URL"}
+              variant="outlined"
+              value={videoUrl}
+              className='Page__videoInput-input'
+              onChange={(e) => setVideoUrl(e.target.value)}
+              placeholder='Enter video URL'
+              required
+              onKeyDown={handleInputKeyDown}
+              InputLabelProps={{
+                shrink: true,
+              }}
+              ref={urlInputRef}
+              error={urlInputError}
+              onBlur={handleUrlInputBlur}
+            />
+            <Button type="submit" variant="contained" color="primary" className='Page__videoInput-submit'>
+              Watch
+            </Button>
+          </form>
+        </div>
+        <div className='Page__vidData'>
+            {videoTitle?'':'Play a video!'}
+            <div
+              className='Page__vidData-title'
+            >
+              {videoTitle}
+            </div>
+        </div>
+      </div>
       <div className='Page__video'>
-        <VideoPlayer videoId={videoId} />
+        <VideoPlayer videoId={videoId} setVideoTitle={setVideoTitle} setVideoDescription={setVideoDescription} />
       </div>
     </div>
   );

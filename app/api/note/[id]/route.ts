@@ -6,11 +6,12 @@ export const GET = async (request: Request | NextRequest, { params }: { params: 
     try {
         await connectToDB();
         
-        const note = await Note.find({userId: params.id}).populate('user');
-        if (!note) return new Response("Note not found", { status: 404 });
-        return new Response(JSON.stringify(note[0]), { status: 200 });        
+        const notes = await Note.find({userId: params.id}).populate('userId');
+        
+        if (!notes) return new Response("Note not found", { status: 404 });
+        return new Response(JSON.stringify(notes), { status: 200 });        
     } catch (error) {
-        return new Response("Failed to fetch note", { status: 500 });
+        return new Response('Failed to fetch notes', { status: 500 });
     }
 }
 
@@ -22,19 +23,18 @@ export const PATCH = async (request: Request | NextRequest, { params }: { params
         let existingNote = await Note.findById(params.id);
 
         if (!existingNote) {
-            return new Response("Stop not found", { status: 404 });
+            return new Response("Note not found", { status: 404 });
         }
 
         existingNote.note = note;
         existingNote.date = date;
-        console.log(existingNote, note, date);
         
         await existingNote.save();
 
         return new Response(JSON.stringify(existingNote), { status: 200 });
     } catch (error) {
         console.error(error);
-        return new Response("Failed to update stop", { status: 500 });
+        return new Response("Failed to update note", { status: 500 });
     }
 };
 
