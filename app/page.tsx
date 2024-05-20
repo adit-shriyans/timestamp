@@ -37,7 +37,7 @@ const MyPage = () => {
     if (match && match[2]) {
       setVideoId(match[2]);
       localStorage.setItem('videoId', match[2]);
-      setVideoUrl(''); // Clear the input field after setting the video ID
+      setVideoUrl('');
     }
   };
 
